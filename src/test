@@ -1,0 +1,5 @@
+HELLO
+SOLVE (+ 0 0)
+SOLVE (+ 1 0)
+SOLVE (* 0 1)
+BYE

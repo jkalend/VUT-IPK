@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  server:
+    build:
+      context: ipkpd
+      dockerfile: Dockerfile
+    environment:
+        PORT: 2023
+        HOST: 127.0.0.1
+        MODE: udp          # tcp or udp
+    container_name: ipk-server
+    ports:
+      - "2023:2023"
+    volumes:
+      - ./src:/ipk/project1/src
+    restart: always
