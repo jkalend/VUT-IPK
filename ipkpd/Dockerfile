@@ -2,7 +2,10 @@ FROM ubuntu:22.04 as server
 
 RUN apt update && \
     apt install -y gcc make && \
-    apt install -y g++
+    apt install -y g++ && \
+    apt install -y valgrind && \
+    apt install -y gdb && \
+    apt install -y cmake
 
 WORKDIR /ipk/project1
 
