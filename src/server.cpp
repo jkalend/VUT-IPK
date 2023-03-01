@@ -308,23 +308,21 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	struct sockaddr_in client_address;
 	while (true) {
 
-		printf("INFO: Ready.\n");
     	/* prijeti odpovedi a jeji vypsani */
         ssize_t bytesrx = recvfrom(master_socket, buf, BUFSIZE, 0, (struct sockaddr *) &client_address, &len);
         if (bytesrx < 0)
             perror("ERROR: recvfrom:");
 
-		int host = getnameinfo((struct sockaddr *) &client_address, len, incoming, BUFSIZE, nullptr, 0, 0);
+		getnameinfo((struct sockaddr *) &client_address, len, incoming, BUFSIZE, nullptr, 0, 0);
 
-//        struct hostent *hostp = gethostbyaddr((const char *)&client_address.sin_addr.s_addr,
-//			  sizeof(client_address.sin_addr.s_addr), AF_INET);
-
-//        hostaddrp = inet_ntoa(client_address.sin_addr);
-//        printf("Message (%lu) from %s:  %s\n", strlen(buf), hostaddrp, buf);
+        char const *hostaddrp = inet_ntoa(client_address.sin_addr);
 
 		double result = 0;
 		std::string response;
 		std::string query = buf + 2;
+
+		std::cout << "Message from " << hostaddrp << ": " << query;
+
 		try {
 			int res = parse(query, &result, 0);
 			response = std::to_string(result);
@@ -340,8 +338,8 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 			response = start + response;
 		}
 
-		for ( int c : response)
-			std::cout << c << std::endl;
+//		for ( int c : response)
+//			std::cout << c << std::endl;
 
 
         /* odeslani zpravy zpet klientovi  */
