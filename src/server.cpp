@@ -15,6 +15,8 @@
 #define BUFSIZE 1024
 #define UDP_BUFSIZE 512
 
+std::string protocol;
+
 namespace ssocket {
 	int master_socket;
 	int client_sockets[30];
@@ -251,17 +253,19 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 					continue;
 				}
 
+				std::cout << "Received message from: " << ntohs(server_address.sin_port) << " : " << response;
+
 				if (expected[i] == 1 && response == "HELLO\n") {
 					expected[i] = 2;
 				} else if (expected[i] == 2 && response != "BYE\n") {
 					size_t start = response.find("SOLVE ");
 					if (start == std::string::npos) {
-						response = "ERR\n";
+						response = "BYE\n";
 					} else if (start == 0) {
 						try {
 							int res = parse(response.substr(6, response.length() - 7), &result, 0);
 							if (res != response.substr(6, response.length() - 7).length() - 1) {
-								response = "ERR\n";
+								response = "BYE\n";
 							} else {
 								response = "RESULT " + std::to_string(result) + "\n";
 							}
@@ -269,12 +273,12 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 							response = "ERR\n";
 						}
 					} else {
-						response = "ERR\n";
+						response = "BYE\n";
 					}
 				} else if (response == "BYE\n") {
 					expected[i] = 0;
 				} else {
-					response = "ERR\n";
+					response = "BYE\n";
 				}
 				std::cout << response << std::endl;
 
@@ -295,7 +299,6 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 			}
 		}
 	}
-	close(master_socket);
 }
 
 void udp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
@@ -353,6 +356,14 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
+	if (protocol == "tcp") {
+		for (int i = 0; i < 30; i++) {
+			if (ssocket::client_sockets[i] != 0) {
+				send(ssocket::client_sockets[i], "BYE\n", 4, 0);
+				close(ssocket::client_sockets[i]);
+			}
+		}
+	}
 	freeaddrinfo(ssocket::serverptr);
 	close(ssocket::master_socket);
 	exit(EXIT_SUCCESS);
@@ -360,9 +371,8 @@ void sigint_handler(int) {
 
 int main (int argc, char **argv) {
 	uint16_t port_number = 0;
-	std::string protocol;
     const char *server_hostname = nullptr;
-    struct sockaddr_in server_address = {0, 0, 0, 0};
+    static struct sockaddr_in server_address;
 
 	std::signal(SIGINT, sigint_handler);
 
@@ -375,7 +385,10 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
-    //printf("INFO: Server socket: %s : %d \n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
+    std::cout << "INFO: Server socket: " << inet_ntoa(server_address.sin_addr) <<" : " <<
+	ntohs(server_address.sin_port) << std::endl;
+
+	std::cout << "INFO: Protocol: " << protocol << std::endl;
 
 	try {
 		if (protocol == "tcp") {
@@ -389,8 +402,7 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
-	for (int i = 0; i < 30; i++)
-		ssocket::client_sockets[i] = 0;
+	memset(ssocket::client_sockets, 0, 30 * sizeof(int));
 
 	try {
 		if (protocol == "tcp")

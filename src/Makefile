@@ -1,5 +1,5 @@
 build:
-	g++ client.cpp -o ipkcpc -std=c++20
+	g++ client.cpp utils.h utils.cpp -o ipkcpc -std=c++20
 clean:
 	rm ipkcpc
 udp : build

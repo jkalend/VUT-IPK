@@ -84,7 +84,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 			continue;
 		}
 
-		if (ssize_t sent = sendto(client_socket, buff.data(), buff.length(), MSG_CONFIRM, (struct sockaddr *) &server_address, server_address_len); sent < 0)
+		if (ssize_t sent = sendto(client_socket, buff.data(), buff.length(), 0, (struct sockaddr *) &server_address, server_address_len); sent < 0)
 			perror("ERROR in sendto");
 
 		/* prijeti odpovedi a jeji vypsani */
@@ -127,8 +127,6 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
-    //printf("INFO: Server socket: %s : %d \n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
-    
 	try {
 		if (protocol == "tcp") {
 			csocket::client_socket = tcp_socket(server_address);
