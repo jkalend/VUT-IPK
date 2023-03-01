@@ -1,51 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdio>
-#include <cstdlib>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <csignal>
-#include <bits/stdc++.h>
+#include "utils.h"
 
-#define BUFSIZE 1024
-#define UDP_BUFSIZE 512
+std::string protocol;
 
 namespace csocket {
 	int client_socket;
 	struct addrinfo *serverptr;
-}
-
-int check_args(int argc, char **argv, const char **hostname, uint16_t *port, std::string *protocol) {
-	int c;
-	char *endptr = nullptr;
-	while ((c = getopt(argc, argv, "h:p:m:")) != -1) {
-		switch (c) {
-			case 'h':
-				*hostname = optarg;
-				break;
-			case 'p':
-				*port = (uint16_t) strtol(optarg, &endptr, 10);
-				break;
-			case 'm':
-				*protocol = optarg;
-				break;
-			default:
-				fprintf(stderr, "usage: %s <hostname> <port>)\n", argv[0]);
-		}
-	}
-
-	if (endptr != nullptr && *endptr != '\0')
-		throw std::runtime_error("ERROR: invalid port");
-
-	if (*protocol != "tcp" && *protocol != "udp")
-		throw std::runtime_error("ERROR: invalid protocol");
-
-	return 0;
 }
 
 struct sockaddr_in * get_adress(const char *hostname) {
@@ -144,6 +103,9 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
+	if (protocol == "tcp") {
+		send(csocket::client_socket, "BYE", 3, 0);
+	}
 	freeaddrinfo(csocket::serverptr);
 	close(csocket::client_socket);
 	exit(EXIT_SUCCESS);
@@ -151,7 +113,6 @@ void sigint_handler(int) {
 
 int main (int argc, char **argv) {
 	uint16_t port_number = 0;
-	std::string protocol;
     const char *server_hostname = nullptr;
     struct sockaddr_in server_address = {0, 0, 0, 0};
 
