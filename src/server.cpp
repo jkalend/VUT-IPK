@@ -15,14 +15,18 @@
 #define BUFSIZE 1024
 #define UDP_BUFSIZE 512
 
+/// Global variables to propagate to signal handler
 std::string protocol;
-
 namespace ssocket {
 	int master_socket;
 	int client_sockets[30];
 	struct addrinfo *serverptr;
 }
 
+/// Calculate the result of expression based on the operator
+/// \param v Vector of numbers
+/// \param op Operator
+/// \return Result of the expression
 double calculate(std::vector<double> v, char op) {
 	double res = v[0];
 	for (int i = 1; i < v.size(); i++) {
@@ -44,22 +48,18 @@ double calculate(std::vector<double> v, char op) {
 	return res;
 }
 
+/// Parse the expression
+/// \param s The expression
+/// \param res int pointer to store the result
+/// \param index The starting index of the expression, used for recursion
+/// \return The index of the last character of the parsed expression
 int parse(std::string s, double *res, int index) {
-	if (s == "\n") {
-		return NL;
-	}
-	if (s == "HELLO\n") {
-		return HELLO;
-	}
-	if (s == "BYE\n") {
-		return BYE;
-	}
 	char op;
 	std::string ops = "+-*/";
 	std::stack<State> stack;
 	std::vector<double> v;
 	std::string num;
-	double tres = 0;
+	double tmp_result = 0;
 	stack.push(OPT_SPACE);
 	stack.push(EXPR);
 	stack.push(SPACE);
@@ -91,8 +91,8 @@ int parse(std::string s, double *res, int index) {
 		} else if (stack.top() == EXPR) {
 			if (s[i] == '(' ) {
 				stack.pop();
-				i = parse(s, &tres, i++);
-				v.push_back(tres);
+				i = parse(s, &tmp_result, i++);
+				v.push_back(tmp_result);
 			} else if (isdigit(s[i])) {
 				stack.pop();
 				stack.push(NUMBER);
@@ -129,8 +129,8 @@ int parse(std::string s, double *res, int index) {
 		} else if (stack.top() == OPT_EXPR) {
 			if (s[i] == '(' ) {
 				stack.pop();
-				i = parse(s, &tres, i++);
-				v.push_back(tres);
+				i = parse(s, &tmp_result, i++);
+				v.push_back(tmp_result);
 				stack.push(OPT_SPACE);
 			} else if (isdigit(s[i])) {
 				stack.pop();
@@ -150,6 +150,9 @@ int parse(std::string s, double *res, int index) {
 	return 1;
 }
 
+/// Get the address of the server
+/// \param hostname DNS name or IPv4 address of the server
+/// \return Server address
 struct sockaddr_in * get_adress(const char *hostname) {
 	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
 
@@ -161,6 +164,9 @@ struct sockaddr_in * get_adress(const char *hostname) {
 	return (struct sockaddr_in*)(ssocket::serverptr->ai_addr);
 }
 
+/// Create a TCP socket
+/// \param server_address Server address
+/// \return The socket descriptor
 int tcp_socket(struct sockaddr_in server_address) {
 	int master_socket;
 	if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0)
@@ -178,6 +184,9 @@ int tcp_socket(struct sockaddr_in server_address) {
 	return master_socket;
 }
 
+/// Create a UDP socket
+/// \param server_address Server address
+/// \return The socket descriptor
 int udp_socket(struct sockaddr_in server_address) {
 	int master_socket;
 	if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) <= 0)
@@ -191,6 +200,10 @@ int udp_socket(struct sockaddr_in server_address) {
 	return master_socket;
 }
 
+/// Communicate with the client using TCP protocol
+/// \param master_socket Socket descriptor of the server
+/// \param server_address Server address
+/// \param server_address_len Server address length
 void tcp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
 	char buf[BUFSIZE] = {0};
 	char incoming[BUFSIZE] = {0};
@@ -270,7 +283,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 								response = "RESULT " + std::to_string(result) + "\n";
 							}
 						} catch (std::runtime_error &e) {
-							response = "ERR\n";
+							response = "BYE\n";
 						}
 					} else {
 						response = "BYE\n";
@@ -291,6 +304,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 				if (response == "BYE\n") {
 					close(client);
 					ssocket::client_sockets[i] = 0;
+					expected[i] = 0;
 					std::cout << "Connection closed" << std::endl;
 				}
 
@@ -301,19 +315,19 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
+/// Communicate with the client using UDP protocol
+/// \param master_socket Socket descriptor of the server
+/// \param server_address Server address
+/// \param server_address_len Server address length
 void udp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
 	char buf[BUFSIZE] = {0};
 	char incoming[BUFSIZE] = {0};
 	std::string cli;
-	fd_set set;
-	int max_sock = master_socket;
 	socklen_t len = sizeof(server_address);
 	struct sockaddr_in client_address;
 	while (true) {
 
-    	/* prijeti odpovedi a jeji vypsani */
-        ssize_t bytesrx = recvfrom(master_socket, buf, BUFSIZE, 0, (struct sockaddr *) &client_address, &len);
-        if (bytesrx < 0)
+        if (ssize_t bytesrx = recvfrom(master_socket, buf, BUFSIZE, 0, (struct sockaddr *) &client_address, &len); bytesrx < 0)
             perror("ERROR: recvfrom:");
 
 		getnameinfo((struct sockaddr *) &client_address, len, incoming, BUFSIZE, nullptr, 0, 0);
@@ -327,7 +341,7 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 		std::cout << "Message from " << hostaddrp << ": " << query;
 
 		try {
-			int res = parse(query, &result, 0);
+			parse(query, &result, 0);
 			response = std::to_string(result);
 			std::string start(1, (char)(response.length()));
 			start = '\0' + start;
@@ -341,18 +355,13 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 			response = start + response;
 		}
 
-//		for ( int c : response)
-//			std::cout << c << std::endl;
-
-
-        /* odeslani zpravy zpet klientovi  */
-        ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len);
-        if (bytestx < 0)
-            perror("ERROR: sendto:");
+        if (ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len); bytestx < 0)
+			perror("ERROR: sendto:");
 	}
-	//close(master_socket);
 }
 
+/// Signal handler for SIGINT
+__attribute__((noreturn))
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;

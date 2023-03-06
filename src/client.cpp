@@ -1,12 +1,15 @@
 #include "utils.h"
 
+// global variables required for proper interruption of the program
 std::string protocol;
-
 namespace csocket {
 	int client_socket;
 	struct addrinfo *serverptr;
 }
 
+/// Gets the address of the server
+/// \param hostname either DNS or IP address
+/// \return pointer to the address of the server
 struct sockaddr_in * get_adress(const char *hostname) {
 	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
 
@@ -18,6 +21,9 @@ struct sockaddr_in * get_adress(const char *hostname) {
 	return (struct sockaddr_in*)(csocket::serverptr->ai_addr);
 }
 
+/// Creates a socket for TCP communication
+/// \param server_address Address of the server
+/// \return Socket descriptor
 int tcp_socket(struct sockaddr_in server_address) {
 	int client_socket;
 	if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0)
@@ -28,6 +34,8 @@ int tcp_socket(struct sockaddr_in server_address) {
 	return client_socket;
 }
 
+/// Creates a socket for UDP communication
+/// \return Socket descriptor
 int udp_socket() {
 	int client_socket;
 	if ((client_socket = socket(AF_INET, SOCK_DGRAM, 0)) <= 0)
@@ -35,10 +43,12 @@ int udp_socket() {
 	return client_socket;
 }
 
+/// Sends messages to the server and receives responses using TCP protocol
+/// \param client_socket TCP socket descriptor
 void tcp_communicate(int client_socket) {
 	char buf[BUFSIZE] = {0};
 	while (true) {
-		/* nacteni zpravy od uzivatele */
+		// Gets the message from the standard input
 		std::string buff;
 		std::getline(std::cin, buff);
 		buff += "\n";
@@ -66,10 +76,14 @@ void tcp_communicate(int client_socket) {
 	}
 }
 
+/// Sends messages to the server and receives responses using UDP protocol
+/// \param client_socket TCP socket descriptor
+/// \param server_address Address of the server
+/// \param server_address_len Length of the server address
 void udp_communicate(int client_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
 	char buf[UDP_BUFSIZE] = {0};
 	while (true) {
-		/* nacteni zpravy od uzivatele */
+		// Gets the message from the standard input
 		server_address.sin_addr.s_addr = INADDR_ANY;
 		std::string buff;
 		socklen_t len;
@@ -77,6 +91,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		if (std::cin.eof())
 			break;
 
+		// Prepares the message to be sent by adding the length of the message and 0 for request
 		std::string start(1, (char)(buff.length() + 1));
 		buff = '\0' + start + buff + '\n';
 		if (buff.length() > UDP_BUFSIZE) {
@@ -87,7 +102,6 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		if (ssize_t sent = sendto(client_socket, buff.data(), buff.length(), 0, (struct sockaddr *) &server_address, server_address_len); sent < 0)
 			perror("ERROR in sendto");
 
-		/* prijeti odpovedi a jeji vypsani */
 		memset(buf, 0, UDP_BUFSIZE);
 		if (ssize_t res = recvfrom(client_socket, (char *)buf, UDP_BUFSIZE, MSG_WAITALL, (struct sockaddr *) &server_address, &len); res < 0)
 			perror("ERROR in recvfrom");
@@ -100,6 +114,8 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
+/// Handles the SIGINT signal
+__attribute__((noreturn))
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
@@ -118,6 +134,7 @@ int main (int argc, char **argv) {
 
 	std::signal(SIGINT, sigint_handler);
 
+	// Checks the arguments and gets the server address
 	try {
         check_args(argc, argv, &server_hostname, &port_number, &protocol);
 		server_address = *get_adress(server_hostname);
@@ -127,6 +144,7 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
+	// Creates a socket for the client
 	try {
 		if (protocol == "tcp") {
 			csocket::client_socket = tcp_socket(server_address);
@@ -139,6 +157,7 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
+	// Communicates with the server
 	try {
 		if (protocol == "tcp")
 			tcp_communicate(csocket::client_socket);
