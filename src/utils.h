@@ -14,8 +14,8 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
 
-#define BUFSIZE 1024
-#define UDP_BUFSIZE 512
+constexpr size_t BUFSIZE = 1024;
+constexpr size_t UDP_BUFSIZE = 512;
 
 extern std::string protocol;
 
