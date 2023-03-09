@@ -109,7 +109,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		if (buf[1] == 0) {
 			std::cout << "OK:" << buf + 3 << std::endl;
 		} else {
-			std::cout << "ERR: parsing failed" << std::endl;
+			std::cout << "ERR:" << buf + 3 << std::endl;
 		}
 	}
 }

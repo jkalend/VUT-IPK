@@ -11,15 +11,14 @@
 #include <stack>
 #include <vector>
 #include "utils.h"
+#include <array>
 
-#define BUFSIZE 1024
-#define UDP_BUFSIZE 512
 
 /// Global variables to propagate to signal handler
 std::string protocol;
 namespace ssocket {
 	int master_socket;
-	int client_sockets[30];
+	std::array<int, 30>client_sockets;
 	struct addrinfo *serverptr;
 }
 
@@ -41,6 +40,7 @@ double calculate(std::vector<double> v, char op) {
 				res *= v[i];
 				break;
 			case '/':
+				if (v[i] == 0) throw std::runtime_error("ERROR: division by zero");
 				res /= v[i];
 				break;
 		}
@@ -254,7 +254,6 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 				if (ssize_t res = recv(client, buf, BUFSIZE, 0); res < 0) {
 					close(client);
 					std::cerr << "ERR: message receiving failed" << std::endl;
-					//throw std::runtime_error("ERR: message receiving failed");
 				}
 
 				std::string response = buf;
@@ -298,7 +297,6 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 				if (ssize_t sent = send(client, response.data(), response.length(), 0); sent <= 0) {
 					close(client);
 					std::cerr << "ERR: message receiving failed" << std::endl;
-					//throw std::runtime_error("ERR: message sending failed");
 				}
 
 				if (response == "BYE\n") {
@@ -411,7 +409,8 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
-	memset(ssocket::client_sockets, 0, 30 * sizeof(int));
+	for (int i = 0; i < 30; i++)
+		ssocket::client_sockets[i] = 0;
 
 	try {
 		if (protocol == "tcp")
