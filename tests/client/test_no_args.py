@@ -1,9 +1,9 @@
-import pytest
 import subprocess
-
+import os
+from tests.utility import find_file
 
 def no_args():
-    process = subprocess.Popen(["cmake-build-debug/ipkcpc"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen([find_file("ipkcpc", os.getcwd())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errors = process.communicate()
     return process.returncode, errors
 
