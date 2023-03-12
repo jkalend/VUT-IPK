@@ -14,7 +14,7 @@ int check_args(int argc, char **argv, const char **hostname, uint16_t *port, std
 	if (argc != 7)
 		throw std::runtime_error("ERROR: invalid number of arguments");
 
-	while ((c = getopt(argc, argv, "h:p:m:")) != -1) {
+	while ((c = getopt(argc, argv, ":h:p:m:")) != -1) {
 		switch (c) {
 			case 'h':
 				*hostname = optarg;
