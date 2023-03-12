@@ -355,6 +355,7 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 
         if (ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len); bytestx < 0)
 			perror("ERROR: sendto:");
+		memset(buf, 0, BUFSIZE);
 	}
 }
 

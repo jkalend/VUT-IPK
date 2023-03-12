@@ -51,6 +51,10 @@ void tcp_communicate(int client_socket) {
 		// Gets the message from the standard input
 		std::string buff;
 		std::getline(std::cin, buff);
+		if (std::cin.eof()) {
+			send(client_socket, "BYE", buff.length(), 0);
+			break;
+		}
 		buff += "\n";
 		if (buff.length() > BUFSIZE) {
 			std::cerr << "Message is too long" << std::endl;

@@ -195,21 +195,21 @@ def no_disconnect(server_udp, ipkcpc):
             if index == 0 and io and io[0] == ipkcpc.stdout.fileno():
                 outs += ipkcpc.stdout.readline().decode("utf-8")
                 sent += 1
-                sleep(1)
+                sleep(2)
             if index == 1 and io and io[0] == ipkcpc.stdin.fileno():
                 ipkcpc.stdin.write(b"(+ 1 2)\n")
             if index == 2 and io and io[0] == ipkcpc.stderr.fileno():
                 errors += ipkcpc.stderr.readline().decode("utf-8")
 
     ipkcpc.send_signal(subprocess.signal.SIGINT)
-    ipkcpc.wait()
+    ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def many_requests(server_udp, ipkcpc):
     sent = 0
     outs, errors = "", ""
-    while sent != 100:
+    while sent != 1000:
         for index, io in enumerate(
                 select.select([ipkcpc.stdout.fileno(), ipkcpc.stderr.fileno()], [ipkcpc.stdin.fileno()], [])):
             if index == 0 and io and io[0] == ipkcpc.stdout.fileno():
@@ -239,7 +239,7 @@ def many_clients():
     for process in processes:
         outs += process.stdout.readline().decode("utf-8")
         process.send_signal(subprocess.signal.SIGINT)
-        process.wait()
+        process.wait(5)
         res += process.returncode
 
     return res, outs, errors
@@ -434,7 +434,7 @@ def test_no_disconnect(server_udp, ipkcpc_udp):
     assert errors == ""
 
 
-@pytest.mark.skip(reason="flaky")
+#@pytest.mark.skip(reason="flaky")
 def test_many_requests(server_udp, ipkcpc_udp):
     res, outs, errors = many_requests(server_udp, ipkcpc_udp)
     assert res == 0
@@ -442,7 +442,7 @@ def test_many_requests(server_udp, ipkcpc_udp):
     assert errors == ""
 
 
-@pytest.mark.skip(reason="flaky")
+#@pytest.mark.skip(reason="flaky")
 def test_many_clients(server_udp, ipkcpc_udp):
     res, outs, errors = many_clients()
     assert res == 0
@@ -450,7 +450,7 @@ def test_many_clients(server_udp, ipkcpc_udp):
     assert errors == ""
 
 
-@pytest.mark.skip(reason="flaky")
+# @pytest.mark.skip(reason="flaky")
 def test_many_clients_many_requests(server_udp, ipkcpc_udp):
     outs = many_clients_many_requests(server_udp, ipkcpc_udp)
     assert outs == "OK:3.000000\n" * 50 * 30
