@@ -38,6 +38,6 @@ enum State {
 	OPT_EXPR,
 };
 
-int check_args(int, char **, const char **, uint16_t *, std::string *);
+int check_args(int, char **, const char **, uint16_t *, std::string *, std::string);
 
 #endif //TEST_UTILS_H

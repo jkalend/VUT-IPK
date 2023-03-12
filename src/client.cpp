@@ -16,7 +16,7 @@ struct sockaddr_in * get_adress(const char *hostname) {
 	csocket::serverptr = nullptr;
 
 	if (getaddrinfo(hostname, nullptr, &hints, &csocket::serverptr) != 0)
-		throw std::runtime_error("ERR: getaddrinfo failed");
+		throw std::runtime_error("ERROR: getaddrinfo failed");
 
 	return (struct sockaddr_in*)(csocket::serverptr->ai_addr);
 }
@@ -95,7 +95,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		std::string start(1, (char)(buff.length() + 1));
 		buff = '\0' + start + buff + '\n';
 		if (buff.length() > UDP_BUFSIZE) {
-			std::cout << "Message is too long" << std::endl;
+			std::cerr << "Message is too long" << std::endl;
 			continue;
 		}
 
@@ -107,9 +107,9 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 			perror("ERROR in recvfrom");
 
 		if (buf[1] == 0) {
-			std::cout << "OK:" << buf + 3 << std::endl;
+			std::cout << "OK:" << buf + 3;
 		} else {
-			std::cout << "ERR:" << buf + 3 << std::endl;
+			std::cerr << "ERR:" << buf + 3;
 		}
 	}
 }
@@ -136,7 +136,7 @@ int main (int argc, char **argv) {
 
 	// Checks the arguments and gets the server address
 	try {
-        check_args(argc, argv, &server_hostname, &port_number, &protocol);
+        check_args(argc, argv, &server_hostname, &port_number, &protocol, "ipkcpc");
 		server_address = *get_adress(server_hostname);
         server_address.sin_port = htons(port_number);
     } catch (std::runtime_error &e) {
@@ -152,7 +152,7 @@ int main (int argc, char **argv) {
 			csocket::client_socket = udp_socket();
 		}
 	} catch (std::runtime_error &e) {
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 		freeaddrinfo(csocket::serverptr);
 		return 1;
 	}
@@ -164,7 +164,7 @@ int main (int argc, char **argv) {
 		if (protocol == "udp")
 			udp_communicate(csocket::client_socket, server_address, sizeof(server_address));
 	} catch (std::runtime_error &e) {
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 		close(csocket::client_socket);
 		freeaddrinfo(csocket::serverptr);
 		return 1;

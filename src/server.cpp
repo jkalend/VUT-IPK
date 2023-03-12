@@ -340,17 +340,17 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 
 		try {
 			parse(query, &result, 0);
-			response = std::to_string(result);
+			response = std::to_string(result) + "\n";
 			std::string start(1, (char)(response.length()));
 			start = '\0' + start;
 			start = '\1' + start;
 			response = start + response;
 		} catch (std::runtime_error &e) {
 			response = e.what();
-			std::string start(1, (char)(response.length()));
+			std::string start(1, (char)(response.length() + 1));
 			start = '\1' + start;
 			start = '\1' + start;
-			response = start + response;
+			response = start + response + "\n";
 		}
 
         if (ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len); bytestx < 0)
@@ -384,7 +384,7 @@ int main (int argc, char **argv) {
 	std::signal(SIGINT, sigint_handler);
 
 	try {
-        check_args(argc, argv, &server_hostname, &port_number, &protocol);
+        check_args(argc, argv, &server_hostname, &port_number, &protocol, "ipkcpd");
 		server_address = *get_adress(server_hostname);
         server_address.sin_port = htons(port_number);
     } catch (std::runtime_error &e) {
