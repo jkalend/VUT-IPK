@@ -1,8 +1,12 @@
 #include "ipkcpc.h"
 
+
 // global variables required for proper interruption of the program
 std::string protocol;
-
+namespace csocket {
+	int client_socket;
+	struct addrinfo *serverptr;
+}
 
 struct sockaddr_in * get_adress(const char *hostname) {
 	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
@@ -115,17 +119,17 @@ void sigint_handler(int) {
 
 int main (int argc, char **argv) {
 	uint16_t port_number = 0;
-    const char *server_hostname = nullptr;
-    struct sockaddr_in server_address = {0, 0, 0, 0};
+	const char *server_hostname = nullptr;
+	struct sockaddr_in server_address = {0, 0, 0, 0};
 
 	std::signal(SIGINT, sigint_handler);
 
 	// Checks the arguments and gets the server address
 	try {
-        check_args(argc, argv, &server_hostname, &port_number, &protocol, "ipkcpc");
+		check_args(argc, argv, &server_hostname, &port_number, &protocol, "ipkcpc");
 		server_address = *get_adress(server_hostname);
-        server_address.sin_port = htons(port_number);
-    } catch (std::runtime_error &e) {
+		server_address.sin_port = htons(port_number);
+	} catch (std::runtime_error &e) {
 		std::cerr << e.what() << std::endl;
 		return 1;
 	}
@@ -143,7 +147,6 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
-	// Communicates with the server
 	try {
 		if (protocol == "tcp")
 			tcp_communicate(csocket::client_socket);
@@ -155,8 +158,4 @@ int main (int argc, char **argv) {
 		freeaddrinfo(csocket::serverptr);
 		return 1;
 	}
-
-	freeaddrinfo(csocket::serverptr);
-    close(csocket::client_socket);
-    return 0;
 }

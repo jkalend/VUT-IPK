@@ -10,7 +10,6 @@
 #include <csignal>
 #include <stack>
 #include <vector>
-#include <array>
 
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H

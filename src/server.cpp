@@ -1,31 +1,9 @@
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <csignal>
-#include <stack>
-#include <vector>
-#include "utils.h"
-#include <array>
-
+#include "ipkcpd.h"
 
 /// Global variables to propagate to signal handler
 std::string protocol;
-namespace ssocket {
-	int master_socket;
-	std::array<int, 30>client_sockets;
-	struct addrinfo *serverptr;
-}
 
-/// Calculate the result of expression based on the operator
-/// \param v Vector of numbers
-/// \param op Operator
-/// \return Result of the expression
+
 double calculate(std::vector<double> v, char op) {
 	double res = v[0];
 	for (int i = 1; i < v.size(); i++) {
@@ -48,11 +26,6 @@ double calculate(std::vector<double> v, char op) {
 	return res;
 }
 
-/// Parse the expression
-/// \param s The expression
-/// \param res int pointer to store the result
-/// \param index The starting index of the expression, used for recursion
-/// \return The index of the last character of the parsed expression
 int parse(std::string s, double *res, int index) {
 	char op;
 	std::string ops = "+-*/";
@@ -150,9 +123,6 @@ int parse(std::string s, double *res, int index) {
 	return 1;
 }
 
-/// Get the address of the server
-/// \param hostname DNS name or IPv4 address of the server
-/// \return Server address
 struct sockaddr_in * get_adress(const char *hostname) {
 	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
 
@@ -164,9 +134,6 @@ struct sockaddr_in * get_adress(const char *hostname) {
 	return (struct sockaddr_in*)(ssocket::serverptr->ai_addr);
 }
 
-/// Create a TCP socket
-/// \param server_address Server address
-/// \return The socket descriptor
 int tcp_socket(struct sockaddr_in server_address) {
 	int master_socket;
 	if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0)
@@ -184,9 +151,6 @@ int tcp_socket(struct sockaddr_in server_address) {
 	return master_socket;
 }
 
-/// Create a UDP socket
-/// \param server_address Server address
-/// \return The socket descriptor
 int udp_socket(struct sockaddr_in server_address) {
 	int master_socket;
 	if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) <= 0)
@@ -200,22 +164,17 @@ int udp_socket(struct sockaddr_in server_address) {
 	return master_socket;
 }
 
-/// Communicate with the client using TCP protocol
-/// \param master_socket Socket descriptor of the server
-/// \param server_address Server address
-/// \param server_address_len Server address length
 void tcp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
 	char buf[BUFSIZE] = {0};
 	char incoming[BUFSIZE] = {0};
 	std::string cli;
 	fd_set set;
-	int max_sock = master_socket;
 	int expected[30] = {0};
 	while (true) {
 
 		FD_ZERO(&set);
 		FD_SET(master_socket, &set);
-		max_sock = master_socket;
+		int max_sock = master_socket;
 
 		for (int client_socket : ssocket::client_sockets) {
 			if (client_socket > 0)
@@ -313,10 +272,6 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
-/// Communicate with the client using UDP protocol
-/// \param master_socket Socket descriptor of the server
-/// \param server_address Server address
-/// \param server_address_len Server address length
 void udp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
 	char buf[BUFSIZE] = {0};
 	char incoming[BUFSIZE] = {0};
@@ -359,7 +314,6 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
-/// Signal handler for SIGINT
 __attribute__((noreturn))
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
