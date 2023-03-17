@@ -1,6 +1,6 @@
 #include "ipkcpd.h"
 
-/// Global variables to propagate to signal handler
+/// Global variable to propagate to signal handler
 std::string protocol;
 
 
@@ -224,7 +224,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 					continue;
 				}
 
-				std::cout << "Received message from: " << ntohs(server_address.sin_port) << " : " << response;
+				std::cout << "Received message" << response;
 
 				if (expected[i] == 1 && response == "HELLO\n") {
 					expected[i] = 2;

@@ -1,7 +1,7 @@
 #include "ipkcpc.h"
 
 
-// global variables required for proper interruption of the program
+// global variable required for proper interruption of the program
 std::string protocol;
 namespace csocket {
 	int client_socket;
@@ -158,4 +158,8 @@ int main (int argc, char **argv) {
 		freeaddrinfo(csocket::serverptr);
 		return 1;
 	}
+
+	freeaddrinfo(csocket::serverptr);
+    close(csocket::client_socket);
+    return 0;
 }

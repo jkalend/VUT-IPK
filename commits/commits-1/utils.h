@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -10,9 +13,6 @@
 #include <csignal>
 #include <stack>
 #include <vector>
-
-#ifndef TEST_UTILS_H
-#define TEST_UTILS_H
 
 constexpr size_t BUFSIZE = 1024;
 constexpr size_t UDP_BUFSIZE = 512;
@@ -40,4 +40,4 @@ enum State {
 
 int check_args(int, char **, const char **, uint16_t *, std::string *, std::string);
 
-#endif //TEST_UTILS_H
+#endif //UTILS_H

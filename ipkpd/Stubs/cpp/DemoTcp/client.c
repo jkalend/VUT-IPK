@@ -46,6 +46,8 @@ int main (int argc, const char * argv[]) {
     server_address.sin_family = AF_INET;
     bcopy((char *)server->h_addr, (char *)&server_address.sin_addr.s_addr, server->h_length);
     server_address.sin_port = htons(port_number);
+	printf("INFO: port_number: %d\n", port_number);
+	printf("INFO: port_number: %d\n", htons(port_number));
    
     /* tiskne informace o vzdalenem soketu */ 
     printf("INFO: Server socket: %s : %d \n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));

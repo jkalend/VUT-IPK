@@ -1,5 +1,5 @@
-#ifndef TEST_IPKCPD_H
-#define TEST_IPKCPD_H
+#ifndef IPKCPD_H
+#define IPKCPD_H
 
 #include "utils.h"
 
@@ -54,4 +54,4 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 /// Handles the SIGINT signal
 void sigint_handler(int);
 
-#endif //TEST_IPKCPD_H
+#endif //IPKCPD_H

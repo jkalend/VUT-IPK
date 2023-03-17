@@ -16,7 +16,7 @@
 #define TEST_UTILS_H
 
 constexpr size_t BUFSIZE = 1024;
-constexpr size_t UDP_BUFSIZE = 512;
+constexpr size_t MAX_UDP = 257; // 255 + \0 + \length
 
 extern std::string protocol;
 

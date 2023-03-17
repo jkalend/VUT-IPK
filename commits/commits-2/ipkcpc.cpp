@@ -1,7 +1,7 @@
 #include "ipkcpc.h"
 
 
-// global variables required for proper interruption of the program
+// global variable required for proper interruption of the program
 std::string protocol;
 namespace csocket {
 	int client_socket;

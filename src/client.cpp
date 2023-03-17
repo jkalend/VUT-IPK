@@ -1,6 +1,6 @@
 #include "ipkcpc.h"
 
-// global variables required for proper interruption of the program
+// global variable required for proper interruption of the program
 std::string protocol;
 
 
@@ -68,7 +68,7 @@ void tcp_communicate(int client_socket) {
 }
 
 void udp_communicate(int client_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
-	char buf[UDP_BUFSIZE] = {0};
+	char buf[BUFSIZE] = {0};
 	while (true) {
 		// Gets the message from the standard input
 		server_address.sin_addr.s_addr = INADDR_ANY;
@@ -81,7 +81,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		// Prepares the message to be sent by adding the length of the message and 0 for request
 		std::string start(1, (char)(buff.length() + 1));
 		buff = '\0' + start + buff + '\n';
-		if (buff.length() > UDP_BUFSIZE) {
+		if (buff.length() > MAX_UDP) {
 			std::cerr << "Message is too long" << std::endl;
 			continue;
 		}
@@ -89,8 +89,8 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 		if (ssize_t sent = sendto(client_socket, buff.data(), buff.length(), 0, (struct sockaddr *) &server_address, server_address_len); sent < 0)
 			perror("ERROR in sendto");
 
-		memset(buf, 0, UDP_BUFSIZE);
-		if (ssize_t res = recvfrom(client_socket, (char *)buf, UDP_BUFSIZE, MSG_WAITALL, (struct sockaddr *) &server_address, &len); res < 0)
+		memset(buf, 0, BUFSIZE);
+		if (ssize_t res = recvfrom(client_socket, (char *)buf, BUFSIZE, MSG_WAITALL, (struct sockaddr *) &server_address, &len); res < 0)
 			perror("ERROR in recvfrom");
 
 		if (buf[1] == 0) {
