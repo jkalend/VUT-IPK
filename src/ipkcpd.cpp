@@ -97,7 +97,7 @@ int parse(std::string s, double *res, int index) {
 				stack.push(OPT_EXPR);
 			} else {
 				stack.pop();
-				if (stack.empty() && v.size() >= 2 && s[i] == ')' && i+1 == s.length()) {
+				if (stack.empty() && v.size() >= 2 && s[i] == ')') {
 					*res = calculate(v, op);
 					num.clear();
 					return i;
@@ -123,7 +123,7 @@ int parse(std::string s, double *res, int index) {
 
 	if (stack.empty() && v.size() >= 2 && index != s.length()) {
 		*res = calculate(v, op);
-		return OK;
+		return index;
 	} else {
 		throw std::runtime_error("parsing error");
 	}
@@ -297,16 +297,16 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
-void udp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len) {
+void udp_communicate(int master_socket) {
 	char buf[BUFSIZE] = {0};
 	char incoming[BUFSIZE] = {0};
 	std::string cli;
-	socklen_t len = sizeof(server_address);
+	socklen_t len = sizeof(struct sockaddr_in);
 	struct sockaddr_in client_address;
 	while (true) {
 
         if (ssize_t bytesrx = recvfrom(master_socket, buf, BUFSIZE, 0, (struct sockaddr *) &client_address, &len); bytesrx < 0)
-            perror("ERROR: recvfrom:");
+			std::cerr << "ERROR: recvfrom:";
 
 		getnameinfo((struct sockaddr *) &client_address, len, incoming, BUFSIZE, nullptr, 0, 0);
 
@@ -319,7 +319,10 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 		std::cout << "Message from " << hostaddrp << ": " << query << std::endl;
 
 		try {
-			parse(query, &result, 0);
+			int end = parse(query, &result, 0);
+			if (end != query.length() - 1)
+				throw std::runtime_error("invalid query");
+
 			response = std::to_string(result);
 			std::string start(1, (char)(response.length()));
 			start = '\0' + start; // status code
@@ -336,7 +339,7 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 		std::cout << "Sending: " << response.substr(3, response.length() - 3) << std::endl;
 
         if (ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len); bytestx < 0)
-			perror("ERROR: sendto:");
+			std::cerr << "ERROR: sendto:";
 		memset(buf, 0, BUFSIZE);
 	}
 }
@@ -403,7 +406,7 @@ int main (int argc, char **argv) {
 		if (protocol == "tcp")
 			tcp_communicate(ssocket::master_socket, server_address, sizeof(server_address));
 		if (protocol == "udp")
-			udp_communicate(ssocket::master_socket, server_address, sizeof(server_address));
+			udp_communicate(ssocket::master_socket);
 	} catch (std::runtime_error &e) {
 		std::cout << e.what() << std::endl;
 		close(ssocket::master_socket);

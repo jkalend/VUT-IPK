@@ -344,9 +344,9 @@ def test_simple_solve_plus(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_plus(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 3.000000\r\n"
+        assert outs == b"OK:3.000000\r\n"
     else:
-        assert outs == b"OK: 3.000000\n"
+        assert outs == b"OK:3.000000\n"
     assert errors == b""
 
 
@@ -354,9 +354,9 @@ def test_simple_solve_minus(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_minus(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: -1.000000\r\n"
+        assert outs == b"OK:-1.000000\r\n"
     else:
-        assert outs == b"OK: -1.000000\n"
+        assert outs == b"OK:-1.000000\n"
     assert errors == b""
 
 
@@ -364,9 +364,9 @@ def test_simple_solve_multiply(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_multiply(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 2.000000\r\n"
+        assert outs == b"OK:2.000000\r\n"
     else:
-        assert outs == b"OK: 2.000000\n"
+        assert outs == b"OK:2.000000\n"
     assert errors == b""
 
 
@@ -374,9 +374,9 @@ def test_simple_solve_divide(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_divide(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 0.500000\r\n"
+        assert outs == b"OK:0.500000\r\n"
     else:
-        assert outs == b"OK: 0.500000\n"
+        assert outs == b"OK:0.500000\n"
     assert errors == b""
 
 
@@ -384,9 +384,9 @@ def test_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 7.000000\r\n"
+        assert outs == b"OK:7.000000\r\n"
     else:
-        assert outs == b"OK: 7.000000\n"
+        assert outs == b"OK:7.000000\n"
     assert errors == b""
 
 
@@ -394,9 +394,9 @@ def test_double_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = double_inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 15.000000\r\n"
+        assert outs == b"OK:15.000000\r\n"
     else:
-        assert outs == b"OK: 15.000000\n"
+        assert outs == b"OK:15.000000\n"
     assert errors == b""
 
 
@@ -404,9 +404,9 @@ def test_two_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = two_inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 45.000000\r\n"
+        assert outs == b"OK:45.000000\r\n"
     else:
-        assert outs == b"OK: 45.000000\n"
+        assert outs == b"OK:45.000000\n"
     assert errors == b""
 
 
@@ -414,9 +414,9 @@ def test_complex_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = complex_expression(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 46.875000\r\n"
+        assert outs == b"OK:46.875000\r\n"
     else:
-        assert outs == b"OK: 46.875000\n"
+        assert outs == b"OK:46.875000\n"
     assert errors == b""
 
 
@@ -424,9 +424,9 @@ def test_complex_expression2(server_udp, ipkcpc_udp):
     ret, outs, errors = complex_expression2(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 334.965000\r\n"
+        assert outs == b"OK:334.965000\r\n"
     else:
-        assert outs == b"OK: 334.965000\n"
+        assert outs == b"OK:334.965000\n"
     assert errors == b""
 
 
@@ -434,9 +434,9 @@ def test_long_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = long_expression(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 122.000000\r\n"
+        assert outs == b"OK:122.000000\r\n"
     else:
-        assert outs == b"OK: 122.000000\n"
+        assert outs == b"OK:122.000000\n"
     assert errors == b""
 
 
@@ -444,9 +444,9 @@ def test_long_expression2(server_udp, ipkcpc_udp):
     ret, outs, errors = long_expression2(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 0.000000\r\n"
+        assert outs == b"OK:0.000000\r\n"
     else:
-        assert outs == b"OK: 0.000000\n"
+        assert outs == b"OK:0.000000\n"
     assert errors == b""
 
 
@@ -538,9 +538,9 @@ def test_continue_after_error(server_udp, ipkcpc_udp):
     ret, outs, errors = continue_after_error(server_udp, ipkcpc_udp)
     assert ret == 0
     if os.name == 'nt':
-        assert outs == b"OK: 3.000000\r\n"
+        assert outs == b"OK:3.000000\r\n"
     else:
-        assert outs == b"OK: 3.000000\n"
+        assert outs == b"OK:3.000000\n"
     assert errors != b""
 
 
@@ -548,7 +548,7 @@ def test_continue_after_error(server_udp, ipkcpc_udp):
 def test_no_disconnect(server_udp, ipkcpc_udp):
     res, outs, errors = no_disconnect(server_udp, ipkcpc_udp)
     assert res == 0
-    assert outs == "OK: 3.000000\n" * 3
+    assert outs == "OK:3.000000\n" * 3
     assert errors == ""
 
 
@@ -556,7 +556,7 @@ def test_no_disconnect(server_udp, ipkcpc_udp):
 def test_many_requests(server_udp, ipkcpc_udp):
     res, outs, errors = many_requests(server_udp, ipkcpc_udp)
     assert res == 0
-    assert outs == "OK: 3.000000\n" * 1000
+    assert outs == "OK:3.000000\n" * 1000
     assert errors == ""
 
 
@@ -564,12 +564,11 @@ def test_many_requests(server_udp, ipkcpc_udp):
 def test_many_clients(server_udp, ipkcpc_udp):
     res, outs, errors = many_clients()
     assert res == 0
-    assert outs == "OK: 3.000000\n" * 30
+    assert outs == "OK:3.000000\n" * 30
     assert errors == ""
 
 
 @pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_clients_many_requests(server_udp, ipkcpc_udp):
     outs = many_clients_many_requests(server_udp, ipkcpc_udp)
-    assert outs == "OK: 3.000000\n" * 50 * 10
-
+    assert outs == "OK:3.000000\n" * 50 * 10

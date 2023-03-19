@@ -244,9 +244,11 @@ def test_wrong_protocol_4():
 def test_missing_protocol():
     assert missing_protocol()[0] == 1
     if os.name == "nt":
-        assert missing_protocol()[1] == b"ERROR: invalid number of arguments\r\n"
+        assert missing_protocol()[1] == b"ERROR: invalid number of arguments\n" \
+                                        b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\r\n"
     else:
-        assert missing_protocol()[1] == b"ERROR: invalid number of arguments\n"
+        assert missing_protocol()[1] == b"ERROR: invalid number of arguments\n" \
+                                        b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\n"
 
 
 def test_wrong_host():
@@ -284,9 +286,11 @@ def test_wrong_host_4():
 def test_missing_host():
     assert missing_host()[0] == 1
     if os.name == "nt":
-        assert missing_host()[1] == b"ERROR: invalid number of arguments\r\n"
+        assert missing_host()[1] == b"ERROR: invalid number of arguments\n" \
+                                    b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\r\n"
     else:
-        assert missing_host()[1] == b"ERROR: invalid number of arguments\n"
+        assert missing_host()[1] == b"ERROR: invalid number of arguments\n" \
+                                    b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\n"
 
 
 def test_wrong_port():
@@ -308,9 +312,11 @@ def test_wrong_port_3():
 def test_missing_port():
     assert missing_port()[0] == 1
     if os.name == "nt":
-        assert missing_port()[1] == b"ERROR: invalid number of arguments\r\n"
+        assert missing_port()[1] == b"ERROR: invalid number of arguments\n" \
+                                    b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\r\n"
     else:
-        assert missing_port()[1] == b"ERROR: invalid number of arguments\n"
+        assert missing_port()[1] == b"ERROR: invalid number of arguments\n" \
+                                    b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\n"
 
 
 def test_unknown_arg():

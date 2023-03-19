@@ -16,10 +16,10 @@ make
 ```
 ### 1.2 Run
 ```bash
-./ipkcpc -h <server_ip> -p <server_port> -m <protocol>
+./ipkcpc -h <server_IPv4> -p <server_port> -m <protocol>
 ```
 where:
-* `<server_ip>` - server ip address or hostname
+* `<server_IPv4>` - server IPv4 address or hostname
 * `<server_port>` - server port
 * `<protocol>` - protocol to use (tcp or udp)
 
@@ -91,11 +91,33 @@ Sometimes the socket creation fails, so by default all failed tests are rerun 3 
 The client is fully supported on Windows. This is achieved by using CMake and Visual Studio build tools to build the client and by using winsock2 library.
 The client is built using CMake, not Makefile on Windows. The server, used for testing, is built using Makefile on UNIX or CMake if built on Windows.
 
-## 5. License
+## 5. Theory
+### 5.1 TCP
+TCP is a connection-oriented protocol.
+This means that the client has to establish a connection with the server before sending any data.
+The client sends a SYN packet to the server, which responds with a SYN-ACK packet.
+After receiving the SYN-ACK packet, the client sends an ACK packet to the server, which confirms the connection.
+After the connection is established, the client can send data to the server.
+The server sends an ACK packet to the client after receiving the data.
+The client sends an ACK packet to the server after receiving the ACK packet from the server.
+This is called a three-way handshake. <sup>[3]</sup>
+
+### 5.2 UDP
+UDP uses a simple connectionless communication model with a minimum of protocol mechanisms.
+UDP provides checksums for data integrity, and port numbers for addressing different functions at the source and destination of the datagram.
+It has no handshaking dialogues, and thus exposes the user's program to any unreliability of the underlying network;
+there is no guarantee of delivery, ordering, or duplicate protection.
+If error-correction facilities are needed at the network interface level,
+an application may instead use Transmission Control Protocol (TCP) or Stream Control Transmission Protocol (SCTP)
+which are designed for this purpose. <sup>[4]</sup>
+
+## 6. License
 This project is licensed under GPL3.0 license.  
 
 ### Author: Jan Kalenda (xkalen07)
 
-## 6. References
+## 7. References
 [1] : https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Project%201/Protocol.md  
-[2] : https://docs.pytest.org/en/7.2.x/
+[2] : https://docs.pytest.org/en/7.2.x/  
+[3] : Transmission Control Protocol. (2023, March 10). In Wikipedia. https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Connection_establishment  
+[4] : User Datagram Protocol. (2023, March 16). In Wikipedia. https://en.wikipedia.org/wiki/User_Datagram_Protocol

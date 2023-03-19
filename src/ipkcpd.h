@@ -47,9 +47,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 
 /// Communicate with the client using UDP protocol
 /// \param master_socket Socket descriptor of the server
-/// \param server_address Server address
-/// \param server_address_len Server address length
-void udp_communicate(int master_socket, struct sockaddr_in server_address, socklen_t server_address_len);
+void udp_communicate(int master_socket);
 
 /// Handles the SIGINT signal
 void sigint_handler(int);
