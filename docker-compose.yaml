@@ -8,7 +8,7 @@ services:
     environment:
         PORT: 3023
         HOST: 127.0.0.1
-        MODE: udp          # tcp or udp
+        MODE: udp
     container_name: ipk-server-udp
     ports:
       - "3023:3023"
@@ -23,10 +23,10 @@ services:
     environment:
         PORT: 2023
         HOST: 127.0.0.1
-        MODE: tcp          # tcp or udp
+        MODE: tcp
     container_name: ipk-server-tcp
     ports:
-      - "2023:2023"
+      - "2023:3023"
     volumes:
       - ./src:/ipk/project1/src
     restart: always

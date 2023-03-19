@@ -9,6 +9,14 @@ struct sockaddr_in * get_adress(const char *hostname) {
 
 	csocket::serverptr = nullptr;
 
+#ifdef _WIN32
+	WSADATA wsaData;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != NO_ERROR) {
+        throw std::runtime_error("ERR: WSAStartup failed");
+    }
+#endif
+
 	if (getaddrinfo(hostname, nullptr, &hints, &csocket::serverptr) != 0)
 		throw std::runtime_error("ERROR: getaddrinfo failed");
 
@@ -71,7 +79,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 	char buf[BUFSIZE] = {0};
 	while (true) {
 		// Gets the message from the standard input
-		server_address.sin_addr.s_addr = INADDR_ANY;
+		//server_address.sin_addr.s_addr = INADDR_ANY;
 		std::string buff;
 		socklen_t len;
 		std::getline(std::cin, buff);
@@ -90,19 +98,18 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 			perror("ERROR in sendto");
 
 		memset(buf, 0, BUFSIZE);
-		if (ssize_t res = recvfrom(client_socket, (char *)buf, BUFSIZE, MSG_WAITALL, (struct sockaddr *) &server_address, &len); res < 0)
+		if (ssize_t res = recvfrom(client_socket, buf, BUFSIZE, 0, (struct sockaddr *) &server_address, &server_address_len); res < 0)
 			perror("ERROR in recvfrom");
 
 		if (buf[1] == 0) {
-			std::cout << "OK:" << buf + 3;
+			std::cout << "OK: " << buf + 3;
 		} else {
-			std::cerr << "ERR:" << buf + 3;
+			std::cerr << "ERROR: " << buf + 3;
 		}
 	}
 }
 
-__attribute__((noreturn))
-void sigint_handler(int) {
+void sigint_handler(int sig) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
 	if (protocol == "tcp") {
@@ -110,6 +117,9 @@ void sigint_handler(int) {
 	}
 	freeaddrinfo(csocket::serverptr);
 	close(csocket::client_socket);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 	exit(EXIT_SUCCESS);
 }
 
@@ -140,6 +150,9 @@ int main (int argc, char **argv) {
 	} catch (std::runtime_error &e) {
 		std::cerr << e.what() << std::endl;
 		freeaddrinfo(csocket::serverptr);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 		return 1;
 	}
 
@@ -153,10 +166,16 @@ int main (int argc, char **argv) {
 		std::cerr << e.what() << std::endl;
 		close(csocket::client_socket);
 		freeaddrinfo(csocket::serverptr);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 		return 1;
 	}
 
 	freeaddrinfo(csocket::serverptr);
     close(csocket::client_socket);
+#ifdef _WIN32
+	WSACleanup();
+#endif
     return 0;
 }

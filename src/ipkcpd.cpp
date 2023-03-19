@@ -41,25 +41,25 @@ int parse(std::string s, double *res, int index) {
 	stack.push(OPERATION);
 
 	if (s[index] != '(') {
-		throw std::runtime_error("ERROR: parsing error");
+		throw std::runtime_error("parsing error");
 	} else {
 		index++;
 	}
 
 	for (int i = index; i < s.length(); i++) {
-		if (s[i+1] == '\n' && s[i] == ')' && stack.empty()) break;
+		//if (s[i] != ')' && stack.empty() && i+1 == s.length()) throw std::runtime_error("parsing error");
 		if (stack.top() == OPERATION) {
 			if (std::find(ops.begin(), ops.end(), s[i]) != ops.end()) {
 				op = *std::find(ops.begin(), ops.end(), s[i]);
 				stack.pop();
 			} else {
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		} else if (stack.top() == SPACE) {
 			if (s[i] == ' ') {
 				stack.pop();
 			} else {
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		} else if (stack.top() == EXPR) {
 			if (s[i] == '(' ) {
@@ -71,7 +71,7 @@ int parse(std::string s, double *res, int index) {
 				stack.push(NUMBER);
 				num.append(1, s[i]);
 			} else {
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		} else if (stack.top() == NUMBER) {
 			if (isdigit(s[i])) {
@@ -84,7 +84,7 @@ int parse(std::string s, double *res, int index) {
 				v.push_back(std::stoi(num));
 				num.clear();
 			} else {
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		} else if (stack.top() == OPT_SPACE) {
 			if (s[i] == ' ') {
@@ -97,7 +97,7 @@ int parse(std::string s, double *res, int index) {
 					num.clear();
 					return i;
 				}
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		} else if (stack.top() == OPT_EXPR) {
 			if (s[i] == '(' ) {
@@ -111,7 +111,7 @@ int parse(std::string s, double *res, int index) {
 				stack.push(NUMBER);
 				num.append(1, s[i]);
 			} else {
-				throw std::runtime_error("ERROR: parsing error");
+				throw std::runtime_error("parsing error");
 			}
 		}
 	}
@@ -119,14 +119,23 @@ int parse(std::string s, double *res, int index) {
 	if (stack.empty() && v.size() >= 2) {
 		*res = calculate(v, op);
 		return OK;
+	} else {
+		throw std::runtime_error("parsing error");
 	}
-	return 1;
 }
 
 struct sockaddr_in * get_adress(const char *hostname) {
-	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
+	struct addrinfo hints = {AI_PASSIVE, AF_UNSPEC, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
 
 	ssocket::serverptr = nullptr;
+
+#ifdef _WIN32
+	WSADATA wsaData;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != NO_ERROR) {
+        throw std::runtime_error("ERR: WSAStartup failed");
+    }
+#endif
 
 	if (getaddrinfo(hostname, nullptr, &hints, &ssocket::serverptr) != 0)
 		throw std::runtime_error("ERR: getaddrinfo failed");
@@ -153,7 +162,7 @@ int tcp_socket(struct sockaddr_in server_address) {
 
 int udp_socket(struct sockaddr_in server_address) {
 	int master_socket;
-	if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) <= 0)
+	if ((master_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) <= 0)
 		throw std::runtime_error("ERROR: socket creation failed");
 
 	if (int a = 1; setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&a, sizeof(int)) < 0)
@@ -193,7 +202,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 				throw std::runtime_error("ERROR: socket accepting failed");
 
 			if(inet_ntop(AF_INET, &server_address.sin_addr, incoming, BUFSIZE)) {
-				std::cout << "Connection from " << buf << ":" << ntohs(server_address.sin_port) << std::endl;
+				std::cout << "Connection from " << buf << ": " << ntohs(server_address.sin_port) << std::endl;
 			} else {
 				throw std::runtime_error("ERROR: inet_ntop failed");
 			}
@@ -224,7 +233,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 					continue;
 				}
 
-				std::cout << "Received message" << response;
+				std::cout << "Received message: " << response;
 
 				if (expected[i] == 1 && response == "HELLO\n") {
 					expected[i] = 2;
@@ -251,7 +260,7 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 				} else {
 					response = "BYE\n";
 				}
-				std::cout << response << std::endl;
+				std::cout << "Sending: " << response;
 
 				if (ssize_t sent = send(client, response.data(), response.length(), 0); sent <= 0) {
 					close(client);
@@ -291,22 +300,24 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 		std::string response;
 		std::string query = buf + 2;
 
-		std::cout << "Message from " << hostaddrp << ": " << query;
+		std::cout << "Message from " << hostaddrp << ": " << query << std::endl;
 
 		try {
 			parse(query, &result, 0);
-			response = std::to_string(result) + "\n";
+			response = std::to_string(result);
 			std::string start(1, (char)(response.length()));
-			start = '\0' + start;
-			start = '\1' + start;
+			start = '\0' + start; // status code
+			start = '\1' + start; // opcode
 			response = start + response;
 		} catch (std::runtime_error &e) {
 			response = e.what();
 			std::string start(1, (char)(response.length() + 1));
-			start = '\1' + start;
-			start = '\1' + start;
-			response = start + response + "\n";
+			start = '\1' + start; // status code
+			start = '\1' + start; // opcode
+			response = start + response;
 		}
+
+		std::cout << "Sending: " << response.substr(3, response.length() - 3) << std::endl;
 
         if (ssize_t bytestx = sendto(master_socket, response.data(), response.length(), 0, (struct sockaddr *) &client_address, len); bytestx < 0)
 			perror("ERROR: sendto:");
@@ -314,7 +325,6 @@ void udp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
-__attribute__((noreturn))
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
@@ -328,6 +338,9 @@ void sigint_handler(int) {
 	}
 	freeaddrinfo(ssocket::serverptr);
 	close(ssocket::master_socket);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 	exit(EXIT_SUCCESS);
 }
 
@@ -361,6 +374,9 @@ int main (int argc, char **argv) {
 	} catch (std::runtime_error &e) {
 		std::cout << e.what() << std::endl;
 		freeaddrinfo(ssocket::serverptr);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 		return 1;
 	}
 
@@ -376,10 +392,16 @@ int main (int argc, char **argv) {
 		std::cout << e.what() << std::endl;
 		close(ssocket::master_socket);
 		freeaddrinfo(ssocket::serverptr);
+#ifdef _WIN32
+	WSACleanup();
+#endif
 		return 1;
 	}
 
 	freeaddrinfo(ssocket::serverptr);
     close(ssocket::master_socket);
+#ifdef _WIN32
+	WSACleanup();
+#endif
     return 0;
 }

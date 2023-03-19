@@ -19,6 +19,8 @@ COPY ./Devenv /ipk/project1/Devenv
 COPY ./Stubs /ipk/project1/Stubs
 COPY start.sh ./
 
+EXPOSE 2023/tcp
+
 RUN chmod -R 777 ./ipkpd ./start.sh
 
 ENTRYPOINT ["bash", "/ipk/project1/start.sh"]

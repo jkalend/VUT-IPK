@@ -44,7 +44,7 @@ int udp_socket(struct sockaddr_in server_address) {
 	return master_socket;
 }
 
-__attribute__((noreturn))
+
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;

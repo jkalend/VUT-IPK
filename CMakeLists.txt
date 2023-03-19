@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
-project(test CXX C)
+project(IPK CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
 
-add_executable(ipkcpc src/client.cpp src/utils.cpp src/utils.h)
-add_executable(ipkcpd src/server.cpp src/utils.cpp src/utils.h)
-
-add_executable(ipkcpc-udp src/client.cpp src/ipkcpc.h src/utils.cpp src/utils.h)
-add_executable(ipkcpc-tcp src/client.cpp src/ipkcpc.h src/utils.cpp src/utils.h)
-add_executable(server-tcp src/server.cpp src/ipkcpd.h src/utils.cpp src/utils.h)
-add_executable(server-udp src/server.cpp src/ipkcpd.h src/utils.cpp src/utils.h)
+if (WIN32)
+add_executable(ipkcpc src/ipkcpc.cpp src/utils.cpp src/utils.h src/getopt/getopt.cpp src/getopt/getopt.h)
+add_executable(ipkcpd src/ipkcpd.cpp src/utils.cpp src/utils.h src/getopt/getopt.cpp src/getopt/getopt.h)
+else()
+add_executable(ipkcpc src/ipkcpc.cpp src/utils.cpp src/utils.h)
+add_executable(ipkcpd src/ipkcpd.cpp src/utils.cpp src/utils.h)
+endif ()

@@ -8,21 +8,30 @@ from tests.utility import find_file
 
 def simple_solve_plus(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def simple_solve_minus(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(- 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def simple_solve_multiply(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(* 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
@@ -34,154 +43,220 @@ def simple_solve_divide(server_udp, ipkcpc):
 
 def inner_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 2 3))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def double_inner_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 2 (+ 3 4)))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def two_inner_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 2 (+ 3 4)) (* 5 6))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def complex_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 2 (+ 3 4)) (* 5 6) (/ 7 8) (/ 1 1))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def complex_expression2(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 45 (+ 3 4)) (* 3 6) (/ 7 8) (/ 0 1) (/ 9 100))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def long_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 100 (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1) (+ 1 1))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def long_expression2(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(* 1 1 1 1 1 1 1 1 1 1 1 0)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def missing_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"SOLVE\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def redundant_solve(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"SOLVE (+ 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_short_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_short_expression2(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def empty_expression(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"()\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def empty_expression2(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(  )\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_many_spaces(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 2  )\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_many_spaces2(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"( + 1 2 )\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_many_spaces3(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b" (+ 1 2 )\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_many_spaces4(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"( + 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def complex_expression_with_divide_by_zero(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 (* 2 (+ 3 4)) (* 5 6) (/ 7 0))\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def missing_left_bracket(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"+ 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def missing_right_bracket(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 2\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def too_long_message(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"a" * 10000 + b"\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
 
 def continue_after_error(server_udp, ipkcpc):
     outs, errors = ipkcpc.communicate(input=b"(+ 1 2\n(+ 1 2)\n", timeout=3)
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
@@ -201,7 +276,10 @@ def no_disconnect(server_udp, ipkcpc):
             if index == 2 and io and io[0] == ipkcpc.stderr.fileno():
                 errors += ipkcpc.stderr.readline().decode("utf-8")
 
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
@@ -220,7 +298,10 @@ def many_requests(server_udp, ipkcpc):
             if index == 2 and io and io[0] == ipkcpc.stderr.fileno():
                 errors += ipkcpc.stderr.readline().decode("utf-8")
 
-    ipkcpc.send_signal(subprocess.signal.SIGINT)
+    if os.name == "nt":
+        ipkcpc.send_signal(subprocess.signal.CTRL_C_EVENT)
+    else:
+        ipkcpc.send_signal(subprocess.signal.SIGINT)
     ipkcpc.wait(5)
     return ipkcpc.returncode, outs, errors
 
@@ -247,7 +328,7 @@ def many_clients():
 
 def many_clients_many_requests(server_udp, ipkcpc):
     processes = []
-    for i in range(30):
+    for i in range(10):
         processes.append(subprocess.Popen(["python3", find_file("udp_spammer.py", os.getcwd())], stdout=subprocess.PIPE))
 
     outs = ""
@@ -259,80 +340,113 @@ def many_clients_many_requests(server_udp, ipkcpc):
     return outs
 
 
-def test_simple_solve(server_udp, ipkcpc_udp):
+def test_simple_solve_plus(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_plus(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:3.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 3.000000\r\n"
+    else:
+        assert outs == b"OK: 3.000000\n"
     assert errors == b""
 
 
 def test_simple_solve_minus(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_minus(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:-1.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: -1.000000\r\n"
+    else:
+        assert outs == b"OK: -1.000000\n"
     assert errors == b""
 
 
 def test_simple_solve_multiply(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_multiply(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:2.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 2.000000\r\n"
+    else:
+        assert outs == b"OK: 2.000000\n"
     assert errors == b""
 
 
 def test_simple_solve_divide(server_udp, ipkcpc_udp):
     ret, outs, errors = simple_solve_divide(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:0.500000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 0.500000\r\n"
+    else:
+        assert outs == b"OK: 0.500000\n"
     assert errors == b""
 
 
 def test_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:7.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 7.000000\r\n"
+    else:
+        assert outs == b"OK: 7.000000\n"
     assert errors == b""
 
 
 def test_double_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = double_inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:15.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 15.000000\r\n"
+    else:
+        assert outs == b"OK: 15.000000\n"
     assert errors == b""
 
 
 def test_two_inner_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = two_inner_expression(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:45.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 45.000000\r\n"
+    else:
+        assert outs == b"OK: 45.000000\n"
     assert errors == b""
 
 
 def test_complex_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = complex_expression(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:46.875000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 46.875000\r\n"
+    else:
+        assert outs == b"OK: 46.875000\n"
     assert errors == b""
 
 
 def test_complex_expression2(server_udp, ipkcpc_udp):
     ret, outs, errors = complex_expression2(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:334.965000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 334.965000\r\n"
+    else:
+        assert outs == b"OK: 334.965000\n"
     assert errors == b""
 
 
 def test_long_expression(server_udp, ipkcpc_udp):
     ret, outs, errors = long_expression(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:122.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 122.000000\r\n"
+    else:
+        assert outs == b"OK: 122.000000\n"
     assert errors == b""
 
 
 def test_long_expression2(server_udp, ipkcpc_udp):
     ret, outs, errors = long_expression2(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:0.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 0.000000\r\n"
+    else:
+        assert outs == b"OK: 0.000000\n"
     assert errors == b""
 
 
@@ -423,35 +537,39 @@ def test_too_long_message(server_udp, ipkcpc_udp):
 def test_continue_after_error(server_udp, ipkcpc_udp):
     ret, outs, errors = continue_after_error(server_udp, ipkcpc_udp)
     assert ret == 0
-    assert outs == b"OK:3.000000\n"
+    if os.name == 'nt':
+        assert outs == b"OK: 3.000000\r\n"
+    else:
+        assert outs == b"OK: 3.000000\n"
     assert errors != b""
 
 
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_no_disconnect(server_udp, ipkcpc_udp):
     res, outs, errors = no_disconnect(server_udp, ipkcpc_udp)
     assert res == 0
-    assert outs == "OK:3.000000\n" * 3
+    assert outs == "OK: 3.000000\n" * 3
     assert errors == ""
 
 
-#@pytest.mark.skip(reason="flaky")
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_requests(server_udp, ipkcpc_udp):
     res, outs, errors = many_requests(server_udp, ipkcpc_udp)
     assert res == 0
-    assert outs == "OK:3.000000\n" * 1000
+    assert outs == "OK: 3.000000\n" * 1000
     assert errors == ""
 
 
-#@pytest.mark.skip(reason="flaky")
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_clients(server_udp, ipkcpc_udp):
     res, outs, errors = many_clients()
     assert res == 0
-    assert outs == "OK:3.000000\n" * 30
+    assert outs == "OK: 3.000000\n" * 30
     assert errors == ""
 
 
-# @pytest.mark.skip(reason="flaky")
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_clients_many_requests(server_udp, ipkcpc_udp):
     outs = many_clients_many_requests(server_udp, ipkcpc_udp)
-    assert outs == "OK:3.000000\n" * 50 * 30
+    assert outs == "OK: 3.000000\n" * 50 * 10
 

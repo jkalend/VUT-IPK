@@ -1,8 +1,10 @@
+import pytest
 import subprocess
 import select
 import os
 from time import sleep
 from tests.utility import find_file
+
 
 def correct_handshake_and_leave(server_tcp, ipkcpc_tcp):
     outs, errors = ipkcpc_tcp.communicate(input=b"HELLO\nBYE\n", timeout=3)
@@ -204,185 +206,257 @@ def many_clients():
 def test_correct_handshake_and_leave(server_tcp, ipkcpc_tcp):
     ret, outs, errors = correct_handshake_and_leave(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors == b""
 
 
 def test_simple_solve(server_tcp, ipkcpc_tcp):
     ret, outs, errors = simple_solve_plus(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 3.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 3.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 3.000000\nBYE\n"
     assert errors == b""
 
 
 def test_simple_solve_minus(server_tcp, ipkcpc_tcp):
     ret, outs, errors = simple_solve_minus(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT -1.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT -1.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT -1.000000\nBYE\n"
     assert errors == b""
 
 
 def test_simple_solve_multiply(server_tcp, ipkcpc_tcp):
     ret, outs, errors = simple_solve_multiply(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 2.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 2.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 2.000000\nBYE\n"
     assert errors == b""
 
 
 def test_simple_solve_divide(server_tcp, ipkcpc_tcp):
     ret, outs, errors = simple_solve_divide(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 0.500000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 0.500000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 0.500000\nBYE\n"
     assert errors == b""
 
 
 def test_inner_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = inner_expression(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 7.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 7.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 7.000000\nBYE\n"
     assert errors == b""
 
 
 def test_double_inner_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = double_inner_expression(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 15.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 15.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 15.000000\nBYE\n"
     assert errors == b""
 
 
 def test_two_inner_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = two_inner_expression(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 45.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 45.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 45.000000\nBYE\n"
     assert errors == b""
 
 
 def test_complex_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = complex_expression(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 46.875000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 46.875000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 46.875000\nBYE\n"
     assert errors == b""
 
 
 def test_complex_expression2(server_tcp, ipkcpc_tcp):
     ret, outs, errors = complex_expression2(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 334.965000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 334.965000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 334.965000\nBYE\n"
     assert errors == b""
 
 
 def test_long_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = long_expression(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 122.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 122.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 122.000000\nBYE\n"
     assert errors == b""
 
 
 def test_long_expression2(server_tcp, ipkcpc_tcp):
     ret, outs, errors = long_expression2(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nRESULT 0.000000\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nRESULT 0.000000\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nRESULT 0.000000\nBYE\n"
     assert errors == b""
 
 
 def test_missing_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = missing_expression(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_missing_solve(server_tcp, ipkcpc_tcp):
     ret, outs, errors = missing_solve(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_short_expression(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_short_expression(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_short_expression2(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_short_expression2(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_many_spaces(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_many_spaces(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_many_spaces2(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_many_spaces2(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_many_spaces3(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_many_spaces3(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_too_many_spaces4(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_many_spaces4(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_complex_expression_with_divide_by_zero(server_tcp, ipkcpc_tcp):
     ret, outs, errors = complex_expression_with_divide_by_zero(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_missing_left_bracket(server_tcp, ipkcpc_tcp):
     ret, outs, errors = missing_left_bracket(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def test_missing_right_bracket(server_tcp, ipkcpc_tcp):
     ret, outs, errors = missing_right_bracket(server_tcp, ipkcpc_tcp)
     assert ret == 1
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
 
 def too_long_message(server_tcp, ipkcpc_tcp):
     ret, outs, errors = too_long_message(server_tcp, ipkcpc_tcp)
     assert ret == 0
-    assert outs == b"HELLO\nBYE\n"
+    if os.name == "nt":
+        assert outs == b"HELLO\r\nBYE\r\n"
+    else:
+        assert outs == b"HELLO\nBYE\n"
     assert errors != b""
 
-
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_no_disconnect(server_tcp, ipkcpc_tcp):
     ret, outs, errors = no_disconnect(server_tcp, ipkcpc_tcp)
     assert ret == 0
     assert outs == "HELLO\n" + "RESULT 3.000000\n" * 3
     assert errors == ""
 
-
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_requests(server_tcp, ipkcpc_tcp):
     ret, outs, errors = many_requests(server_tcp, ipkcpc_tcp)
     assert ret == 0
     assert outs == "HELLO\n" + "RESULT 3.000000\n" * 100
     assert errors == ""
 
-
+@pytest.mark.skipif(os.name == 'nt', reason="not supported on windows")
 def test_many_clients(server_tcp, ipkcpc_tcp):
     ret, outs, errors = many_clients()
     assert ret == 0

@@ -3,10 +3,7 @@
 
 // global variable required for proper interruption of the program
 std::string protocol;
-namespace csocket {
-	int client_socket;
-	struct addrinfo *serverptr;
-}
+
 
 struct sockaddr_in * get_adress(const char *hostname) {
 	struct addrinfo hints = {AI_PASSIVE, AF_INET, SOCK_DGRAM, 0, 0, nullptr, nullptr, nullptr};
@@ -36,7 +33,7 @@ int udp_socket() {
 	return client_socket;
 }
 
-__attribute__((noreturn))
+
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;

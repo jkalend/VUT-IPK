@@ -105,7 +105,7 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 	}
 }
 
-__attribute__((noreturn))
+
 void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
