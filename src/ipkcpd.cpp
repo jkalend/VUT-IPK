@@ -1,3 +1,8 @@
+// the core of the program is inspired by the following sources:
+// https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+// https://www.geeksforgeeks.org/udp-server-client-implementation-c/
+// https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Stubs/cpp
+// https://learn.microsoft.com/en-us/windows/win32/api/winsock/
 #include "ipkcpd.h"
 
 /// Global variable to propagate to signal handler

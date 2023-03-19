@@ -6,7 +6,7 @@ The format of queries is described in the [protocol specification](https://git.f
 Client connects to a server using TCP or UDP protocol, which is required by user to specify.
 The server and port are also required to be specified by user. If any of the required arguments is missing, the client will print an error and exit.
 
-The client is built using Makefile on UNIX or CMake if built on Windows.
+The client is built utilising Makefile or CMake on UNIX or only CMake if built on Windows, see chapter 4 for more details.
 
 ## 1. Usage
 ### 1.1 Build
@@ -23,7 +23,7 @@ where:
 * `<server_port>` - server port
 * `<protocol>` - protocol to use (tcp or udp)
 
-### 1.3 Example
+### 1.3 Examples
 ```bash
 ./ipkcpc -h localhost -p 1234 -m tcp
 HELLO
@@ -61,7 +61,7 @@ For testing I have decided to use pytest <sup>[2]</sup> as I already have some e
 * CMake
 
 ### 3.2 Build
-Execute the following command in project root directory to build both client and the server:
+Execute the following command in git repository root directory to build both client and the server:
 ```bash
 cmake -B build
 cmake --build build
@@ -79,7 +79,7 @@ pip install -r requirements.txt
 ```
 
 ### 3.3 Run
-Execute the following command in project root directory to run tests:
+Execute the following command in git repository root directory to run tests:
 ```bash
 pytest
 ```
@@ -87,13 +87,15 @@ The default configuration is to run tests on localhost on port 2023 using both T
 Sometimes the socket creation fails, so by default all failed tests are rerun 3 times.
 
 
-### 4. Windows support
+## 4. Windows support
 The client is fully supported on Windows. This is achieved by using CMake and Visual Studio build tools to build the client and by using winsock2 library.
 The client is built using CMake, not Makefile on Windows. The server, used for testing, is built using Makefile on UNIX or CMake if built on Windows.
 
-### 5. License
-This project is licensed under GPL3.0 license.
+## 5. License
+This project is licensed under GPL3.0 license.  
 
+### Author: Jan Kalenda (xkalen07)
 
+## 6. References
 [1] : https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Project%201/Protocol.md  
 [2] : https://docs.pytest.org/en/7.2.x/
