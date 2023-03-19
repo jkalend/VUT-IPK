@@ -12,7 +12,8 @@ int check_args(int argc, char **argv, const char **hostname, uint16_t *port, std
 	char *endptr = nullptr;
 
 	if (argc != 7)
-		throw std::runtime_error("ERROR: invalid number of arguments");
+		throw std::runtime_error("ERROR: invalid number of arguments\n"
+								 "usage: " + filename + " -h <hostname> -p <port> -m <protocol>\n");
 
 	while ((c = getopt(argc, argv, ":h:p:m:")) != -1) {
 		switch (c) {
@@ -36,6 +37,9 @@ int check_args(int argc, char **argv, const char **hostname, uint16_t *port, std
 
 	if (*protocol != "tcp" && *protocol != "udp")
 		throw std::runtime_error("ERROR: invalid protocol");
+
+	if (*port < 1024 || *port > 65535)
+		throw std::runtime_error("ERROR: invalid port");
 
 	return 0;
 }

@@ -1,3 +1,8 @@
+// the core of the program is inspired by the following sources:
+// https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+// https://www.geeksforgeeks.org/udp-server-client-implementation-c/
+// https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Stubs/cpp
+// https://learn.microsoft.com/en-us/windows/win32/api/winsock/
 #include "ipkcpc.h"
 
 // global variable required for proper interruption of the program
@@ -104,9 +109,9 @@ void udp_communicate(int client_socket, struct sockaddr_in server_address, sockl
 			perror("ERROR in recvfrom");
 
 		if (buf[1] == 0) {
-			std::cout << "OK: " << buf + 3 << std::endl;
+			std::cout << "OK:" << buf + 3 << std::endl;
 		} else {
-			std::cerr << "ERROR: " << buf + 3 << std::endl;
+			std::cerr << "ERR:" << buf + 3 << std::endl;
 		}
 	}
 }
@@ -115,7 +120,11 @@ void sigint_handler(int) {
 	std::cout << "Exiting" << std::endl;
 	std::cout << "Bye..." << std::endl;
 	if (protocol == "tcp") {
-		send(csocket::client_socket, "BYE", 3, 0);
+		send(csocket::client_socket, "BYE\n", 4, 0);
+		std::cout << "BYE" << std::endl;
+		char buf[BUFSIZE] = {0};
+		recv(csocket::client_socket, buf, BUFSIZE, 0);
+		std::cout << buf;
 	}
 	freeaddrinfo(csocket::serverptr);
 	close(csocket::client_socket);

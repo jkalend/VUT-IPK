@@ -7,13 +7,7 @@
 #include <vector>
 #include <array>
 
-#ifdef __linux__
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#else
+#ifdef __WIN32
 #pragma comment(lib, "Ws2_32.lib")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -22,6 +16,12 @@
 #include "getopt/getopt.h"
 typedef SSIZE_T ssize_t;
 #define close closesocket
+#else
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 #ifndef UTILS_H

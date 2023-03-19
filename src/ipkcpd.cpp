@@ -92,7 +92,7 @@ int parse(std::string s, double *res, int index) {
 				stack.push(OPT_EXPR);
 			} else {
 				stack.pop();
-				if (stack.empty() && v.size() >= 2 && s[i] == ')') {
+				if (stack.empty() && v.size() >= 2 && s[i] == ')' && i+1 == s.length()) {
 					*res = calculate(v, op);
 					num.clear();
 					return i;
@@ -116,7 +116,7 @@ int parse(std::string s, double *res, int index) {
 		}
 	}
 
-	if (stack.empty() && v.size() >= 2) {
+	if (stack.empty() && v.size() >= 2 && index != s.length()) {
 		*res = calculate(v, op);
 		return OK;
 	} else {
@@ -218,13 +218,24 @@ void tcp_communicate(int master_socket, struct sockaddr_in server_address, sockl
 
 		for (int i = 0; i < 30; i++) {
 			int client = ssocket::client_sockets[i];
-			if (FD_ISSET(client, &set)) {
-				if (ssize_t res = recv(client, buf, BUFSIZE, 0); res < 0) {
-					close(client);
-					std::cerr << "ERR: message receiving failed" << std::endl;
-				}
+			std::string response;
 
-				std::string response = buf;
+			if (FD_ISSET(client, &set)) {
+				while (response.find("\n") == std::string::npos) {
+					if (ssize_t res = recv(client, buf, BUFSIZE, 0); res < 0) {
+						close(client);
+						std::cerr << "ERR: message receiving failed" << std::endl;
+					}
+					if (response.length() > BUFSIZE) {
+						send(client, "BYE\n", 4, 0);
+						close(client);
+						std::cerr << "ERR: message too long" << std::endl;
+						response.clear();
+						break;
+					}
+
+					response += buf;
+				}
 				double result = 0;
 
 				if (response == "\n" || response == "") {
