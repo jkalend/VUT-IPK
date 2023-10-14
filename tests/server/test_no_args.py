@@ -2,11 +2,12 @@ import subprocess
 import os
 from tests.utility import find_file
 
+
 def no_args():
     if os.name == "nt":
-        process = subprocess.Popen([find_file("ipkcpc.exe", os.getcwd())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen([find_file("ipkcpd.exe", os.getcwd())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
-        process = subprocess.Popen([find_file("ipkcpc", os.getcwd())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen([find_file("ipkcpd", os.getcwd())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errors = process.communicate()
     return process.returncode, errors
 
@@ -15,7 +16,7 @@ def test_no_args():
     assert no_args()[0] == 1
     if os.name == "nt":
         assert no_args()[1] == b"ERROR: invalid number of arguments\r\n" \
-                               b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\r\n"
+                               b"usage: ipkcpd -h <hostname> -p <port> -m <protocol>\r\n"
     else:
         assert no_args()[1] == b"ERROR: invalid number of arguments\n" \
-                               b"usage: ipkcpc -h <hostname> -p <port> -m <protocol>\n"
+                               b"usage: ipkcpd -h <hostname> -p <port> -m <protocol>\n"

@@ -1,45 +1,31 @@
-# IPK project Docker
+# IPK Projects
+In this reopository you can find my solutions to the projects for the course IPK at FIT VUT Brno.
 
-## Motivation
-**\*\*ck VM. I don't want to use it.**
+## 1. Project 1 - Client for IPKCP protocol
+Implementation of client for IPKCP protocol. Client sends queries to server and prints the response.
+The format of queries is described in the [protocol specification](https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Project%201/Protocol.md).<sup>[1]</sup>
 
-## Usage
-```bash
-docker-compose up --build
-```
-get docker container id
-```bash
-docker ps
-```
-connect to docker container
-```bash
-docker exec -it <container_id> /bin/bash
-```
+Client connects to a server using TCP or UDP protocol, which is required by user to specify.
+The server and port are also required to be specified by user. If any of the required arguments is missing, the client will print an error and exit.
 
+The client is built utilising Makefile or CMake on UNIX or only CMake if built on Windows.
 
-## Requirements
-* [Docker](https://www.docker.com/)
-* [Docker Compose](https://docs.docker.com/compose/)
+## 2. Project 2 - Server for IPKCP protocol
+Implementation of server for IPKCP protocol. Server receives queries from client and responds with the result of the calculation or an error.
+The format of queries is described in the [protocol specification](https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Project%201/Protocol.md).<sup>[1]</sup>
 
-# Main issue
-* On M1 Macs with docker on Colima. When sending request to server,
- you get 0 response, because socket is not connected directly to application,
- but to docker container.
+Server listens on a specified port for TCP or UDP connections, which is required by user to specify.
+If any of the required arguments is missing, the server will print an error and exit.
 
-# That means:
-If you want to send request to server, you need to do it directly from docker container.
-
-If anyone knows how to fix it, please let me know. And create Issue or PR.
-
-If you using VSCode, you can use [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension to connect to docker container.
-
-# PS
-`src/client.c` is copy of `Stubs/cpp/DemoTcp/client.c`. Not my code, do what ever you want with it. 
-
-# Questions
-If you have any questions, feel free to contact me on:  
-* Discord - `Pomo#1707`  
-* Telegram - `@Mark_Eting` (more active)
+The server is built utilising Makefile or CMake on UNIX or only CMake if built on Windows.
 
 ## License
-None. Do what ever you want with this code.
+This project is licensed under the GPL3.0 License - see the [LICENSE](LICENSE) file for details.  
+getopt.h and getopt.c <sup>[2]</sup> are licensed under the Apache License 2.0 - see the [LICENSE](src/getopt/LICENSE) file for details.
+
+## Authors
+* Jan Kalenda (xkalen07)
+
+## References
+[1] [Protocol specification](https://git.fit.vutbr.cz/NESFIT/IPK-Projekty/src/branch/master/Project%201/Protocol.md)  
+[2] [getopt.h and getopt.c](https://github.com/iotivity/iotivity/tree/master/resource/c_common/windows/src)

@@ -3,12 +3,16 @@ project(IPK CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
 
 if (WIN32)
-add_executable(ipkcpc src/ipkcpc.cpp src/utils.cpp src/utils.h src/getopt/getopt.cpp src/getopt/getopt.h)
-add_executable(ipkcpd src/ipkcpd.cpp src/utils.cpp src/utils.h src/getopt/getopt.cpp src/getopt/getopt.h)
+add_executable(ipkcpc Project-1/ipkcpc.cpp Project-1/utils.cpp Project-1/utils.h
+        Project-1/getopt/getopt.cpp Project-1/getopt/getopt.h)
+add_executable(ipkcpd Project-2/IOTA.cpp Project-2/IOTA.h Project-1/utils.cpp Project-1/utils.h
+        Project-2/server.cpp Project-2/server.h Project-2/TCPServer.cpp Project-2/TCPServer.h Project-2/UDPServer.cpp
+        Project-2/UDPServer.h Project-2/UDPServer.cpp Project-1/getopt/getopt.cpp Project-1/getopt/getopt.h)
 else()
-add_executable(ipkcpc src/ipkcpc.cpp src/utils.cpp src/utils.h)
-add_executable(ipkcpd src/ipkcpd.cpp src/utils.cpp src/utils.h)
+add_executable(ipkcpc Project-1/ipkcpc.cpp Project-1/utils.cpp Project-1/utils.h)
+add_executable(ipkcpd Project-2/IOTA.cpp Project-2/IOTA.h Project-1/utils.cpp Project-1/utils.h
+        Project-2/server.cpp Project-2/server.h Project-2/TCPServer.cpp Project-2/TCPServer.h Project-2/UDPServer.cpp
+        Project-2/UDPServer.h Project-2/UDPServer.cpp)
 endif ()
